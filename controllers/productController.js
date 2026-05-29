@@ -1,3 +1,4 @@
+import Product from "../models/product.model.js";
 export const createProduct = async (req, res) => {
   try {
     const product = await Product.create({
@@ -12,10 +13,18 @@ export const createProduct = async (req, res) => {
 };
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find();
-    res.json(products);
+    const products = await Product.find().sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      products,
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 export const getProduct = async (req, res) => {
@@ -43,5 +52,61 @@ export const deleteProduct = async (req, res) => {
     res.json({ msg: "Product deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+export const getProductsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+
+    const products = await Product.find({ category });
+
+    res.json({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+// GET /api/products/search?q=honey
+export const searchProducts = async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    const products = await Product.find({
+      name: { $regex: q, $options: "i" },
+    });
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+export const getBestSellingProducts = async (req, res) => {
+  try {
+    const products = await Product.find({
+      "selling.bestSelling": true,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
