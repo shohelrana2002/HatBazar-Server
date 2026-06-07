@@ -1,4 +1,5 @@
 import Product from "../models/product.model.js";
+//  crete products
 export const createProduct = async (req, res) => {
   try {
     const product = await Product.create({
@@ -11,6 +12,7 @@ export const createProduct = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+// get all products
 export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
@@ -27,6 +29,7 @@ export const getAllProducts = async (req, res) => {
     });
   }
 };
+// get products
 export const getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -35,6 +38,7 @@ export const getProduct = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+// updated products
 export const updateProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
@@ -46,6 +50,7 @@ export const updateProduct = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+// delete products
 export const deleteProduct = async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
@@ -92,6 +97,7 @@ export const searchProducts = async (req, res) => {
     });
   }
 };
+// get by single
 export const getBestSellingProducts = async (req, res) => {
   try {
     const products = await Product.find({

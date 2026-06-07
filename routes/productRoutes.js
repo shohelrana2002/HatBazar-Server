@@ -15,7 +15,7 @@ import adminMiddleware from "../middleware/adminMiddleware.js";
 
 const productRoutes = express.Router();
 
-// public
+// publics
 productRoutes.get("/", getAllProducts);
 productRoutes.get("/search", searchProducts);
 productRoutes.get("/best-selling", getBestSellingProducts);
