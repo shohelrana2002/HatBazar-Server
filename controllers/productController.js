@@ -12,7 +12,7 @@ export const createProduct = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-// get all product
+// get all productssssssssssssss
 export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
