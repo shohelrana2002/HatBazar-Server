@@ -2,40 +2,58 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    userEmail: { type: String },
+    userName: { type: String },
+    orderId: {
+      type: String,
+      unique: true,
       required: true,
     },
+    customer: {
+      name: { type: String },
+      phone: { type: String },
+      email: { type: String },
+      address: { type: String },
+      city: { type: String },
+      postalCode: { type: String },
+    },
 
-    orderItems: [
+    products: [
       {
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
-        },
-        quantity: Number,
-        price: Number,
+        productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        name: { type: String },
+        image: { type: String },
+        price: { type: Number }, // String na, Number
+        quantity: { type: Number }, // String na, Number
       },
     ],
 
-    shippingAddress: {
-      address: String,
-      city: String,
-      phone: String,
-    },
+    subtotal: { type: Number, required: true }, // "1500" default value chilo — bhul
+    deliveryCharge: { type: Number, default: 0 },
+    total: { type: Number, required: true },
 
-    totalPrice: {
-      type: Number,
-      required: true,
-    },
-
-    status: {
+    paymentMethod: {
       type: String,
-      default: "Pending", // Pending | Shipped | Delivered
+      enum: ["Cash on Delivery", "bKash", "Nagad"],
+      default: "Cash on Delivery",
+    },
+
+    senderNumber: { type: String, default: "" },
+    transactionId: { type: String, default: "" },
+
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid", "Rejected"],
+      default: "Pending",
+    },
+
+    orderStatus: {
+      type: String,
+      enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
+      default: "Pending",
     },
   },
-  { timestamps: true },
+  { timestamps: true }, // createdAt/updatedAt automatic
 );
 
 export default mongoose.model("Order", orderSchema);
