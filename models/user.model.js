@@ -11,13 +11,22 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    password: {
+    phone: {
       type: String,
-      required: true,
+      default: "",
+    },
+
+    photoURL: {
+      type: String,
+      default: "",
     },
     role: {
       type: String,
-      default: "user", // admin / user
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    phone: {
+      type: Number,
     },
   },
   { timestamps: true },

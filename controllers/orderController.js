@@ -16,7 +16,7 @@ export const createOrder = async (req, res) => {
 
     const orderId = `SH-${date}-${String(count + 1).padStart(10, "0")}`;
     const order = await Order.create({ ...req.body, orderId });
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Order Created",
       order,
@@ -25,7 +25,7 @@ export const createOrder = async (req, res) => {
   } catch (error) {
     console.log("ORDER ERROR:", error); // এটা যোগ করো
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -48,7 +48,7 @@ export const getAllOrders = async (req, res) => {
       .populate("user")
       .populate("orderItems.product");
 
-    res.json(orders);
+    return res.json(orders);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -63,7 +63,7 @@ export const updateOrderStatus = async (req, res) => {
       { new: true },
     );
 
-    res.json(order);
+    return res.json(order);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -81,7 +81,7 @@ export const getOrderByOrderId = async (req, res) => {
         message: "Order not found",
       });
     }
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       order,
     });
@@ -117,7 +117,7 @@ export const updatePayment = async (req, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: "Payment Submitted Successfully",
       order,

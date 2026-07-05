@@ -17,7 +17,7 @@ export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       count: products.length,
       products,
@@ -45,7 +45,7 @@ export const updateProduct = async (req, res) => {
       new: true,
     });
 
-    res.json(product);
+    return res.json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -65,7 +65,7 @@ export const getProductsByCategory = async (req, res) => {
 
     const products = await Product.find({ category });
 
-    res.json({
+    return res.json({
       success: true,
       products,
     });
@@ -85,7 +85,7 @@ export const searchProducts = async (req, res) => {
       name: { $regex: q, $options: "i" },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       count: products.length,
       products,
@@ -104,7 +104,7 @@ export const getBestSellingProducts = async (req, res) => {
       "selling.bestSelling": true,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       count: products.length,
       products,
