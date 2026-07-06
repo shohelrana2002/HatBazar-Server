@@ -3,12 +3,11 @@ import {
   createOrder,
   getMyOrders,
   getAllOrders,
-  updateOrderStatus,
   getOrderByOrderId,
+  updatePaymentStatus,
   updatePayment,
 } from "../controllers/orderController.js";
-
-import authMiddleware from "../middleware/authMiddleware.js";
+import verifyJWT from "../middleware/authMiddleware.js";
 import adminMiddleware from "../middleware/adminMiddleware.js";
 
 const orderRoutes = express.Router();
@@ -16,10 +15,11 @@ const orderRoutes = express.Router();
 // user
 orderRoutes.post("/", createOrder);
 orderRoutes.patch("/:orderId/payment", updatePayment);
-orderRoutes.get("/my", authMiddleware, getMyOrders);
+orderRoutes.get("/my", verifyJWT, getMyOrders);
 orderRoutes.get("/:orderId", getOrderByOrderId);
+
 // admin
-orderRoutes.get("/", authMiddleware, adminMiddleware, getAllOrders);
-orderRoutes.put("/:id", authMiddleware, adminMiddleware, updateOrderStatus);
+orderRoutes.get("/", getAllOrders);
+orderRoutes.put("/:id", verifyJWT, adminMiddleware, updatePaymentStatus);
 
 export default orderRoutes;

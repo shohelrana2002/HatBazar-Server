@@ -42,15 +42,46 @@ export const getMyOrders = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate("user")
-      .populate("orderItems.product");
+    const { days = "all" } = req.query;
 
-    return res.json(orders);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    let filter = {};
+
+    // Today
+    if (days === "today") {
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date();
+      end.setHours(23, 59, 59, 999);
+
+      filter.createdAt = {
+        $gte: start,
+        $lte: end,
+      };
+    }
+
+    // 7 / 15 / 30 / 90
+    else if (days !== "all") {
+      const date = new Date();
+      date.setDate(date.getDate() - Number(days));
+
+      filter.createdAt = {
+        $gte: date,
+      };
+    }
+
+    const orders = await Order.find(filter).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 export const updateOrderStatus = async (req, res) => {
@@ -89,8 +120,7 @@ export const getOrderByOrderId = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
-/*==== Updated By id === Transition o sender number updated */
+/*========== Updated send Number o Transition number =======  */
 
 export const updatePayment = async (req, res) => {
   try {
@@ -124,6 +154,57 @@ export const updatePayment = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+/*========== Admin Routes Admin REject Or Accept =======  */
+
+export const updatePaymentStatus = async (req, res) => {
+  try {
+    const io = req.app.get("io");
+
+    const { id } = req.params;
+    const { paymentStatus } = req.body;
+
+    // শুধুমাত্র এই ৩টি status গ্রহণ করবে
+    const validStatus = ["Pending", "Approved", "Rejected"];
+
+    if (!validStatus.includes(paymentStatus)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment status",
+      });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { paymentStatus },
+      { new: true },
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // Socket Notification
+    io.to(order.userEmail).emit("payment-status-updated", {
+      orderId: order.orderId,
+      paymentStatus: order.paymentStatus,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Payment ${paymentStatus} successfully.`,
+      order,
+    });
+  } catch (error) {
+    return res.status(500).json({
       success: false,
       message: error.message,
     });

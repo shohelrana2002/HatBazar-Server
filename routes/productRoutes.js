@@ -10,8 +10,8 @@ import {
   getBestSellingProducts,
 } from "../controllers/productController.js";
 
-import authMiddleware from "../middleware/authMiddleware.js";
 import adminMiddleware from "../middleware/adminMiddleware.js";
+import verifyJWT from "../middleware/authMiddleware.js";
 
 const productRoutes = express.Router();
 
@@ -22,8 +22,8 @@ productRoutes.get("/best-selling", getBestSellingProducts);
 productRoutes.get("/:id", getProduct);
 productRoutes.get("/category/:category", getProductsByCategory);
 // admin only
-productRoutes.post("/", authMiddleware, adminMiddleware, createProduct);
-productRoutes.put("/:id", authMiddleware, adminMiddleware, updateProduct);
-productRoutes.delete("/:id", authMiddleware, adminMiddleware, deleteProduct);
+productRoutes.post("/", verifyJWT, adminMiddleware, createProduct);
+productRoutes.put("/:id", verifyJWT, adminMiddleware, updateProduct);
+productRoutes.delete("/:id", verifyJWT, adminMiddleware, deleteProduct);
 
 export default productRoutes;
