@@ -31,17 +31,25 @@ export const createOrder = async (req, res) => {
     });
   }
 };
+//=================================
 export const getMyOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.id }).populate(
-      "orderItems.product",
-    );
+    const orders = await Order.find({
+      userEmail: req.user.email,
+    }).sort({ createdAt: -1 });
 
-    res.json(orders);
+    res.status(200).json({
+      success: true,
+      orders,
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
+//=================================
 
 export const getAllOrders = async (req, res) => {
   try {

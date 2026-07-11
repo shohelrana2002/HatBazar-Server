@@ -15,7 +15,7 @@ const orderRoutes = express.Router();
 // user
 orderRoutes.post("/", createOrder);
 orderRoutes.patch("/:orderId/payment", updatePayment);
-orderRoutes.get("/my", verifyJWT, getMyOrders);
+orderRoutes.get("/my-orders", verifyJWT, getMyOrders);
 orderRoutes.get("/:orderId", getOrderByOrderId);
 
 // admin
