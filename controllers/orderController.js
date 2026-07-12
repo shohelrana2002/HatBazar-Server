@@ -199,13 +199,13 @@ export const updatePaymentStatus = async (req, res) => {
         message: "Order not found",
       });
     }
-
+    console.log(order.userEmail);
     // Socket Notification
     io.to(order.userEmail).emit("payment-status-updated", {
       orderId: order.orderId,
       paymentStatus: order.paymentStatus,
     });
-
+    console.log("JOIN ROOM:", email);
     return res.status(200).json({
       success: true,
       message: `Payment ${paymentStatus} successfully.`,
