@@ -177,7 +177,6 @@ export const updatePaymentStatus = async (req, res) => {
     const { id } = req.params;
     const { paymentStatus } = req.body;
 
-    // শুধুমাত্র এই ৩টি status গ্রহণ করবে
     const validStatus = ["Pending", "Approved", "Rejected"];
 
     if (!validStatus.includes(paymentStatus)) {
@@ -190,7 +189,9 @@ export const updatePaymentStatus = async (req, res) => {
     const order = await Order.findByIdAndUpdate(
       id,
       { paymentStatus },
-      { new: true },
+      {
+        returnDocument: "after",
+      },
     );
 
     if (!order) {
@@ -205,7 +206,7 @@ export const updatePaymentStatus = async (req, res) => {
       orderId: order.orderId,
       paymentStatus: order.paymentStatus,
     });
-    console.log("JOIN ROOM:", email);
+    console.log("Socket emitted to:", order.userEmail);
     return res.status(200).json({
       success: true,
       message: `Payment ${paymentStatus} successfully.`,
