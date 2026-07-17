@@ -201,7 +201,7 @@ export const updatePaymentStatus = async (req, res) => {
       });
     }
     console.log(order.userEmail);
-    // Socket Notification
+    //     h sSocket Notification
     io.to(order.userEmail).emit("payment-status-updated", {
       orderId: order.orderId,
       paymentStatus: order.paymentStatus,
